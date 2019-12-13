@@ -189,6 +189,8 @@ namespace CrewRandR
             public double LastMissionDuration = -1;
             public double LastMissionEndTime = -1;
 
+            public double CumuledMissionDurationSinceLastRest = 0;
+
             public double VacationExpiry
             {
                 get
@@ -198,9 +200,18 @@ namespace CrewRandR
                         double VacationScalar = CrewRandRSettings.Instance.VacationScalar;
                         double MinimumVacationDays = CrewRandRSettings.Instance.MinimumVacationDays * Utilities.GetDayLength;
                         double MaximumVacationDays = CrewRandRSettings.Instance.MaximumVacationDays * Utilities.GetDayLength;
-                        double Expiry = LastMissionEndTime + (LastMissionDuration * VacationScalar).Clamp(MinimumVacationDays, MaximumVacationDays);
-                        
-                        return Expiry;
+
+                        double MinimumMissionTime = VacationScalar * MinimumVacationDays;
+
+                        if (CumuledMissionDurationSinceLastRest < MinimumMissionTime)
+                        {
+                            return LastMissionEndTime;
+                        }
+                        else
+                        {
+                            double Expiry = LastMissionEndTime + (CumuledMissionDurationSinceLastRest * VacationScalar).Clamp(MinimumVacationDays, MaximumVacationDays);
+                            return Expiry;
+                        }
                     }
                     else
                     {
@@ -247,6 +258,7 @@ namespace CrewRandR
                     _thisNode.AddValue("GetLastMissionDuration", LastMissionDuration);
                     _thisNode.AddValue("LastMissionEndTime", LastMissionEndTime);
                     _thisNode.AddValue("ExtremelyFatigued", ExtremelyFatigued);
+                    _thisNode.AddValue("CumuledMissionDurationSinceLastRest", CumuledMissionDurationSinceLastRest);
 
                     return _thisNode;
                 }
@@ -271,6 +283,15 @@ namespace CrewRandR
                 else
                 {
                     CurrentMissionStartTime = -1;  // Kerbal is not on a mission
+                }
+
+                if (configNode.HasValue("CumuledMissionDurationSinceLastRest"))
+                {
+                    CumuledMissionDurationSinceLastRest = Convert.ToDouble(configNode.GetValue("CumuledMissionDurationSinceLastRest"));
+                }
+                else
+                {
+                    CumuledMissionDurationSinceLastRest = -1;
                 }
             }
 
@@ -318,6 +339,7 @@ namespace CrewRandR
                 Logging.Info("Started mission for " + kerbal.name + " at UT " + currentTime);
 
                 kerbalExt.CurrentMissionStartTime = currentTime;
+                kerbalExt.CumuledMissionDurationSinceLastRest = 0;
             }
         }
 
@@ -351,6 +373,7 @@ namespace CrewRandR
             kerbalExt.LastMissionEndTime = currentTime;
             kerbalExt.LastMissionDuration = currentTime - kerbalExt.CurrentMissionStartTime;
             kerbalExt.CurrentMissionStartTime = -1;  // Mission has ended; "current" is now "last"
+            kerbalExt.CumuledMissionDurationSinceLastRest += kerbalExt.LastMissionDuration;
 
             Logging.Debug("Mission duration was " + Utilities.GetFormattedTime(kerbalExt.LastMissionDuration));
         }
