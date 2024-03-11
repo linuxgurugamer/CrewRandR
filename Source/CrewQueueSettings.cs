@@ -70,6 +70,7 @@ namespace CrewRandR
         public int MaximumVacationDays = 28;
 #endif
         public bool AssignCrews {  get { return HighLogic.CurrentGame.Parameters.CustomParams<CrewRandRCustomParams>().AssignCrews; } }
+        public bool AssignAllCrews { get { return HighLogic.CurrentGame.Parameters.CustomParams<CrewRandRCustomParams>().AssignAllCrews; } }
         public double VacationScalar { get { return HighLogic.CurrentGame.Parameters.CustomParams<CrewRandRCustomParams>().vacationScalar; } }
         public int MinimumVacationDays { get { return HighLogic.CurrentGame.Parameters.CustomParams<CrewRandRCustomParams>().MinimumVacationDays; } }
         public int MaximumVacationDays { get { return HighLogic.CurrentGame.Parameters.CustomParams<CrewRandRCustomParams>().MaximumVacationDays; } }
@@ -203,8 +204,11 @@ namespace CrewRandR
 
 
 
-        [GameParameters.CustomParameterUI("Automatically select crew?")]
+        [GameParameters.CustomParameterUI("Automatically select crew first crewable part?")]
         public bool AssignCrews = true;
+
+        [GameParameters.CustomParameterUI("Automatically select crew for all crewable parts?")]
+        public bool AssignAllCrews = true;
 
         // The following crazy code is due to a bug introduced in 1.2.2
         // See this link for details:  http://forum.kerbalspaceprogram.com/index.php?/topic/7542-the-official-unoffical-quothelp-a-fellow-plugin-developerquot-thread/&page=100#comment-2887044
