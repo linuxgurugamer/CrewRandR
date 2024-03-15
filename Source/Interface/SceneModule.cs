@@ -71,6 +71,11 @@ namespace CrewRandR.Interface
                         PartCrewManifest partManifest = partCrewManifests[0];
                         partManifest.AddCrewToOpenSeats(CrewRandR.Instance.GetCrewForPart(partManifest.PartInfo.partPrefab, new List<ProtoCrewMember>(), true));
                     }
+
+                    if (CrewRandRSettings.Instance != null && CrewRandRSettings.Instance.AssignAllCrews)
+                    {
+                        OnFillButton();
+                    }
                 }
 
                  CrewAssignmentDialog.Instance.RefreshCrewLists(originalVesselManifest, true, false);
