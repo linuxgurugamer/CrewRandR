@@ -1,5 +1,8 @@
 ChangeLog
 
+1.1.11.6
+	Renamed DLL for better CKAN compatibility
+
 1.1.11.5
 	Updated version file to use github for new version info
 	Copied web page to README-WEB.md
